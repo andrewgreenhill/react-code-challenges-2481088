@@ -1,34 +1,48 @@
-import React from 'react'
+import React, { useState, createContext, useContext } from "react";
 
-function ColorPicker () {
-  const colors = ['red', 'blue', 'yellow', 'green', 'black', 'white', 'purple']
+const ColourContext = createContext();
+
+function ColorPicker() {
+  const colours = ["red", "blue", "yellow", "green", "black", "white", "purple"];
+  const { setPenColour } = useContext(ColourContext);
   return (
     <div>
       <h1>Choose a color</h1>
-      {colors.map(color => <button key={color} style={{ backgroundColor: color }} />)}
+      {colours.map((colour) => (
+        <button onClick={() => setPenColour(colour)} key={colour} style={{ backgroundColor: colour }} />
+      ))}
     </div>
-  )
+  );
 }
 
-function Pixel () {
-  return <div style={{ height: '20px', width: '20px', backgroundColor: 'lightGrey', margin: '1px' }} />
-}
-
-function Pixels () {
-  const pixels = []
-  for (let i = 0; i < 100; i++) pixels.push(<Pixel key={i} />)
+function Pixel() {
+  const [pixelColour, setPixelColour] = useState("lightGrey");
+  const { penColour } = useContext(ColourContext);
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(10, 1fr)', width: '210px', margin: '0 auto' }}>
+    <div
+      onClick={() => setPixelColour(penColour)}
+      style={{ height: "20px", width: "20px", backgroundColor: pixelColour, margin: "1px" }}
+    />
+  );
+}
+
+function Pixels() {
+  const pixels = [];
+  for (let i = 0; i < 100; i++) pixels.push(<Pixel key={i} />);
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(10, 1fr)", width: "210px", margin: "0 auto" }}>
       {pixels}
     </div>
-  )
+  );
 }
 
-export default function PixelArt () {
+export default function PixelArt() {
+  const [penColour, setPenColour] = useState("lightGrey");
+
   return (
-    <div>
+    <ColourContext.Provider value={{ penColour, setPenColour }}>
       <ColorPicker />
       <Pixels />
-    </div>
-  )
+    </ColourContext.Provider>
+  );
 }
